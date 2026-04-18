@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>بيادر الغذاء للحلويات</title>
 
 <style>
@@ -15,6 +15,7 @@ body{
 margin:0;
 font-family:Cairo,sans-serif;
 background:linear-gradient(135deg,#fdf5e6,#f7e8d0);
+-webkit-text-size-adjust:100%;
 }
 
 /* 🔝 هيدر */
@@ -22,144 +23,121 @@ header{
 background:linear-gradient(135deg,var(--dark),#5d4037);
 color:white;
 text-align:center;
-padding:40px;
+padding:25px 15px;
 position:relative;
 box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
 .logo{
-width:90px;
+width:80px;
 border-radius:50%;
 background:white;
 padding:5px;
 }
 
-/* 🔐 زر مخفي */
+/* 🔐 زر المدير */
 #loginBtn{
 position:absolute;
 top:10px;
 left:10px;
 background:rgba(255,255,255,0.15);
 color:white;
-border:none;
-padding:8px 12px;
-border-radius:10px;
+border:1px solid rgba(255,255,255,0.2);
+padding:5px 8px;
+border-radius:8px;
+font-size:11px;
 cursor:pointer;
-font-size:12px;
+width:auto;
 }
 
-/* 📦 كونتينر */
+/* كونتينر */
 .container{
 max-width:1100px;
 margin:auto;
-padding:20px;
+padding:15px;
 }
 
-/* 🔥 سحب الصور (للأدمن فقط) */
+/* رفع الصور */
 #dropZone{
 border:2px dashed var(--main);
-padding:25px;
+padding:18px;
 text-align:center;
 border-radius:15px;
-margin-bottom:20px;
-cursor:pointer;
+margin-bottom:15px;
+display:none;
 background:#fff7ef;
 font-weight:bold;
 color:var(--main);
-transition:0.3s;
-display:none;
 }
 
-#dropZone:hover{
-background:#ffe2c7;
-transform:scale(1.02);
-}
-
-#dropZone.dragover{
-background:#ffd3a8;
-}
-
-/* 🧑‍💼 لوحة الأدمن */
-.admin{
-display:none;
-background:white;
-padding:20px;
-border-radius:15px;
-margin-bottom:20px;
-box-shadow:0 10px 20px rgba(0,0,0,0.1);
-}
-
-input{
-width:100%;
-padding:10px;
-margin:5px 0;
-border-radius:10px;
-border:1px solid #ddd;
-}
-
-/* 🛍 المنتجات */
+/* grid */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-gap:20px;
+grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+gap:12px;
 }
 
+/* كارد */
 .card{
 background:white;
-border-radius:20px;
+border-radius:18px;
 overflow:hidden;
-box-shadow:0 10px 25px rgba(0,0,0,0.08);
-transition:0.3s;
-cursor:pointer;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+transition:0.2s;
 }
 
-.card:hover{
-transform:translateY(-8px);
-box-shadow:0 20px 40px rgba(0,0,0,0.15);
+.card:active{
+transform:scale(0.97);
 }
 
 .card img{
 width:100%;
-height:180px;
+height:140px;
 object-fit:cover;
+display:block;
 }
 
 .card-body{
-padding:15px;
+padding:10px;
 text-align:center;
 }
 
-.price{
-color:var(--main);
-font-weight:bold;
+.card h3{
+font-size:14px;
+margin:0;
 }
 
-/* 🗑 زر حذف */
-.delBtn{
-background:linear-gradient(135deg,#e74c3c,#c0392b);
+/* زر */
+button{
+background:linear-gradient(135deg,#d9792b,#b85a1b);
 color:white;
 border:none;
-padding:10px;
+padding:8px;
 border-radius:10px;
 width:100%;
-margin-top:5px;
+font-size:13px;
 cursor:pointer;
 }
 
-/* 🛒 سلة */
+/* حذف */
+.delBtn{
+background:linear-gradient(135deg,#e74c3c,#c0392b);
+margin-top:5px;
+}
+
+/* سلة */
 .cart{
 position:fixed;
-bottom:20px;
-left:20px;
+bottom:15px;
+left:15px;
 background:var(--dark);
 color:white;
-padding:12px 20px;
-border-radius:50px;
-cursor:pointer;
-box-shadow:0 10px 20px rgba(0,0,0,0.2);
+padding:10px 16px;
+border-radius:40px;
+font-size:14px;
 }
 
-/* 🖼 modal */
+/* modal */
 #modal{
 display:none;
 position:fixed;
@@ -167,13 +145,15 @@ inset:0;
 background:rgba(0,0,0,0.6);
 justify-content:center;
 align-items:center;
+padding:15px;
 }
 
 .modal-box{
 background:white;
-padding:20px;
-border-radius:20px;
-width:300px;
+padding:15px;
+border-radius:15px;
+width:90%;
+max-width:320px;
 text-align:center;
 }
 
@@ -182,56 +162,38 @@ width:100%;
 border-radius:10px;
 }
 
-.close{
-position:absolute;
-top:10px;
-left:10px;
-cursor:pointer;
-}
-
 </style>
 </head>
 
 <body>
 
 <header>
-<button id="loginBtn" onclick="login()">🔐 مدير</button>
+<button id="loginBtn" onclick="login()">مدير</button>
 
-<img src="logo.png" class="logo">
-<h1>شركة بيادر الغذاء للحلويات</h1>
+<img src="logo.png" class="logo" onerror="this.src='https://via.placeholder.com/100'">
+<h2>شركة بيادر الغذاء للحلويات</h2>
 <p>شوكولاتة • بسكويت • بطاطس</p>
 </header>
 
 <div class="container">
 
-<!-- 🔥 سحب صور للأدمن فقط -->
 <div id="dropZone">اسحب صورة هنا لإضافة منتج</div>
 <input type="file" id="fileInput" hidden>
-
-<!-- 👨‍💼 لوحة الأدمن -->
-<div class="admin" id="adminBox">
-<h3>إضافة منتج يدوي</h3>
-<input type="text" id="name" placeholder="اسم المنتج">
-<input type="number" id="price" placeholder="السعر">
-<button onclick="addProduct()">إضافة</button>
-</div>
 
 <div class="grid" id="products"></div>
 
 </div>
 
 <div class="cart" onclick="showCart()">
-🛒 السلة (<span id="count">0</span>)
+🛒 (<span id="count">0</span>)
 </div>
 
-<!-- modal -->
 <div id="modal">
 <div class="modal-box">
-<span class="close" onclick="closeModal()">❌</span>
+<span onclick="closeModal()">❌</span>
 <img id="mimg">
 <h3 id="mname"></h3>
-<p id="mprice"></p>
-<button onclick="addFromModal()">إضافة</button>
+<button onclick="addFromModal()">إضافة للسلة</button>
 </div>
 </div>
 
@@ -239,16 +201,14 @@ cursor:pointer;
 
 let products = JSON.parse(localStorage.getItem("p")) || [];
 let cart = [];
-let isAdmin = false;
-let tempImage = null;
-let selected = null;
+let isAdmin=false;
+let selected=null;
 
-/* 🔐 دخول */
+/* دخول */
 function login(){
-let pass = prompt("كلمة السر:");
-if(pass === "1234"){
-isAdmin = true;
-document.getElementById("adminBox").style.display="block";
+let pass=prompt("كلمة السر:");
+if(pass==="1234"){
+isAdmin=true;
 document.getElementById("dropZone").style.display="block";
 document.getElementById("loginBtn").style.display="none";
 render();
@@ -257,56 +217,43 @@ render();
 
 /* حفظ */
 function save(){
-localStorage.setItem("p", JSON.stringify(products));
+localStorage.setItem("p",JSON.stringify(products));
 }
 
-/* إضافة */
-function addProduct(){
-let name=document.getElementById("name").value;
-let price=document.getElementById("price").value;
-
-if(!name || !price || !tempImage) return alert("أكمل البيانات");
-
-products.push({name,price,image:tempImage});
-save();
-render();
-}
-
-/* 📤 رفع صورة */
+/* رفع صورة */
 function handleFile(file){
 let reader=new FileReader();
 reader.onload=e=>{
-tempImage=e.target.result;
-
 let name=prompt("اسم المنتج:");
-let price=prompt("السعر:");
+if(!name) return;
 
-if(!name || !price) return;
+products.push({
+name,
+image:e.target.result
+});
 
-products.push({name,price,image:tempImage});
 save();
 render();
 };
 reader.readAsDataURL(file);
 }
 
-/* drag & drop */
+/* drag */
 let dropZone=document.getElementById("dropZone");
 
 dropZone.onclick=()=>document.getElementById("fileInput").click();
 
 dropZone.addEventListener("dragover",e=>{
 e.preventDefault();
-dropZone.classList.add("dragover");
+dropZone.style.background="#ffe2c7";
 });
 
 dropZone.addEventListener("dragleave",()=>{
-dropZone.classList.remove("dragover");
+dropZone.style.background="#fff7ef";
 });
 
 dropZone.addEventListener("drop",e=>{
 e.preventDefault();
-dropZone.classList.remove("dragover");
 handleFile(e.dataTransfer.files[0]);
 });
 
@@ -326,9 +273,10 @@ div.innerHTML+=`
 <div class="card-body">
 
 <h3>${p.name}</h3>
-<div class="price">${p.price} ريال</div>
 
-<button onclick="event.stopPropagation();addCart(${i})">🛒 إضافة</button>
+<button onclick="event.stopPropagation();addCart(${i})">
+🛒 إضافة
+</button>
 
 ${isAdmin ? `
 <button class="delBtn" onclick="event.stopPropagation();del(${i})">
@@ -359,7 +307,6 @@ let p=products[i];
 document.getElementById("modal").style.display="flex";
 document.getElementById("mimg").src=p.image;
 document.getElementById("mname").innerText=p.name;
-document.getElementById("mprice").innerText=p.price+" ريال";
 }
 
 function closeModal(){
@@ -380,7 +327,7 @@ document.getElementById("count").innerText=cart.length;
 function showCart(){
 let text="طلب:\n";
 cart.forEach(i=>{
-text+=i.name+" - "+i.price+" ريال\n";
+text+=i.name+"\n";
 });
 window.open("https://wa.me/966591007353?text="+encodeURIComponent(text));
 }
