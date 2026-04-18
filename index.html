@@ -2,99 +2,71 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>بيادر الغذاء للحلويات</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بيادر الغذاء</title>
 
 <style>
-:root{
---main:#d9792b;
---dark:#3e2723;
-}
-
 body{
 margin:0;
 font-family:Cairo,sans-serif;
-background:linear-gradient(135deg,#fdf5e6,#f7e8d0);
--webkit-text-size-adjust:100%;
+background:#f7e8d0;
 }
 
-/* 🔝 هيدر */
 header{
-background:linear-gradient(135deg,var(--dark),#5d4037);
+background:#3e2723;
 color:white;
 text-align:center;
-padding:25px 15px;
+padding:20px;
 position:relative;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
-.logo{
-width:80px;
-border-radius:50%;
-background:white;
-padding:5px;
-}
-
-/* 🔐 زر المدير */
 #loginBtn{
 position:absolute;
 top:10px;
 left:10px;
-background:rgba(255,255,255,0.15);
-color:white;
-border:1px solid rgba(255,255,255,0.2);
-padding:5px 8px;
+font-size:12px;
+padding:6px 10px;
+border:none;
 border-radius:8px;
-font-size:11px;
+background:#ffffff22;
+color:white;
 cursor:pointer;
-width:auto;
 }
 
-/* كونتينر */
 .container{
-max-width:1100px;
+max-width:1000px;
 margin:auto;
 padding:15px;
 }
 
-/* رفع الصور */
 #dropZone{
-border:2px dashed var(--main);
-padding:18px;
-text-align:center;
-border-radius:15px;
-margin-bottom:15px;
 display:none;
+border:2px dashed #d9792b;
+padding:20px;
+text-align:center;
+border-radius:12px;
+margin-bottom:15px;
 background:#fff7ef;
 font-weight:bold;
-color:var(--main);
 }
 
-/* grid */
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
 gap:12px;
 }
 
-/* كارد */
 .card{
 background:white;
-border-radius:18px;
+border-radius:15px;
 overflow:hidden;
-box-shadow:0 8px 20px rgba(0,0,0,0.08);
-transition:0.2s;
-}
-
-.card:active{
-transform:scale(0.97);
+box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
 
 .card img{
 width:100%;
 height:140px;
 object-fit:cover;
-display:block;
 }
 
 .card-body{
@@ -102,66 +74,29 @@ padding:10px;
 text-align:center;
 }
 
-.card h3{
-font-size:14px;
-margin:0;
-}
-
-/* زر */
 button{
-background:linear-gradient(135deg,#d9792b,#b85a1b);
-color:white;
-border:none;
-padding:8px;
-border-radius:10px;
 width:100%;
-font-size:13px;
-cursor:pointer;
+padding:8px;
+border:none;
+border-radius:10px;
+background:#d9792b;
+color:white;
 }
 
-/* حذف */
-.delBtn{
-background:linear-gradient(135deg,#e74c3c,#c0392b);
+.del{
+background:#c0392b;
 margin-top:5px;
 }
 
-/* سلة */
 .cart{
 position:fixed;
 bottom:15px;
 left:15px;
-background:var(--dark);
+background:#3e2723;
 color:white;
-padding:10px 16px;
-border-radius:40px;
-font-size:14px;
+padding:10px 15px;
+border-radius:30px;
 }
-
-/* modal */
-#modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.6);
-justify-content:center;
-align-items:center;
-padding:15px;
-}
-
-.modal-box{
-background:white;
-padding:15px;
-border-radius:15px;
-width:90%;
-max-width:320px;
-text-align:center;
-}
-
-.modal-box img{
-width:100%;
-border-radius:10px;
-}
-
 </style>
 </head>
 
@@ -169,90 +104,92 @@ border-radius:10px;
 
 <header>
 <button id="loginBtn" onclick="login()">مدير</button>
-
-<img src="logo.png" class="logo" onerror="this.src='https://via.placeholder.com/100'">
-<h2>شركة بيادر الغذاء للحلويات</h2>
-<p>شوكولاتة • بسكويت • بطاطس</p>
+<h2>بيادر الغذاء للحلويات</h2>
 </header>
 
 <div class="container">
 
-<div id="dropZone">اسحب صورة هنا لإضافة منتج</div>
+<div id="dropZone">اسحب صورة لإضافة منتج</div>
 <input type="file" id="fileInput" hidden>
 
 <div class="grid" id="products"></div>
 
 </div>
 
-<div class="cart" onclick="showCart()">
-🛒 (<span id="count">0</span>)
-</div>
+<div class="cart">🛒 <span id="count">0</span></div>
 
-<div id="modal">
-<div class="modal-box">
-<span onclick="closeModal()">❌</span>
-<img id="mimg">
-<h3 id="mname"></h3>
-<button onclick="addFromModal()">إضافة للسلة</button>
-</div>
-</div>
+<script type="module">
 
-<script>
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
 
-let products = JSON.parse(localStorage.getItem("p")) || [];
+const firebaseConfig = {
+apiKey: "AIzaSyCBylxNbBu1vqp0vBzFHuIKQTwKnONB2KI",
+authDomain: "bayader-food.firebaseapp.com",
+databaseURL: "https://bayader-food-default-rtdb.firebaseio.com",
+projectId: "bayader-food",
+storageBucket: "bayader-food.appspot.com",
+messagingSenderId: "977142574677",
+appId: "1:977142574677:web:86f37e2c11259a9d886edc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+let isAdmin = false;
 let cart = [];
-let isAdmin=false;
-let selected=null;
 
-/* دخول */
-function login(){
-let pass=prompt("كلمة السر:");
+const productsRef = ref(db,"products");
+
+/* تحميل المنتجات */
+onValue(productsRef,(snap)=>{
+render(snap.val() || {});
+});
+
+/* دخول مدير */
+window.login = function(){
+let pass = prompt("كلمة السر");
 if(pass==="1234"){
 isAdmin=true;
 document.getElementById("dropZone").style.display="block";
 document.getElementById("loginBtn").style.display="none";
-render();
 }
-}
-
-/* حفظ */
-function save(){
-localStorage.setItem("p",JSON.stringify(products));
 }
 
 /* رفع صورة */
 function handleFile(file){
-let reader=new FileReader();
-reader.onload=e=>{
-let name=prompt("اسم المنتج:");
+let name = prompt("اسم المنتج:");
 if(!name) return;
 
-products.push({
-name,
-image:e.target.result
-});
+let fileRef = sRef(storage,"products/"+Date.now());
 
-save();
-render();
-};
-reader.readAsDataURL(file);
+uploadBytes(fileRef,file).then(res=>{
+getDownloadURL(res.ref).then(url=>{
+push(productsRef,{
+name,
+image:url
+});
+});
+});
 }
 
 /* drag */
-let dropZone=document.getElementById("dropZone");
+let dz = document.getElementById("dropZone");
 
-dropZone.onclick=()=>document.getElementById("fileInput").click();
+dz.onclick=()=>document.getElementById("fileInput").click();
 
-dropZone.addEventListener("dragover",e=>{
+dz.addEventListener("dragover",e=>{
 e.preventDefault();
-dropZone.style.background="#ffe2c7";
+dz.style.background="#ffe2c7";
 });
 
-dropZone.addEventListener("dragleave",()=>{
-dropZone.style.background="#fff7ef";
+dz.addEventListener("dragleave",()=>{
+dz.style.background="#fff7ef";
 });
 
-dropZone.addEventListener("drop",e=>{
+dz.addEventListener("drop",e=>{
 e.preventDefault();
 handleFile(e.dataTransfer.files[0]);
 });
@@ -261,25 +198,30 @@ document.getElementById("fileInput").addEventListener("change",e=>{
 handleFile(e.target.files[0]);
 });
 
+/* حذف */
+window.del = function(key){
+remove(ref(db,"products/"+key));
+}
+
 /* عرض */
-function render(){
+function render(data){
 let div=document.getElementById("products");
 div.innerHTML="";
 
-products.forEach((p,i)=>{
+Object.entries(data).forEach(([key,p])=>{
 div.innerHTML+=`
-<div class="card" onclick="openProduct(${i})">
+<div class="card">
 <img src="${p.image}">
 <div class="card-body">
 
 <h3>${p.name}</h3>
 
-<button onclick="event.stopPropagation();addCart(${i})">
+<button onclick="addCart()">
 🛒 إضافة
 </button>
 
 ${isAdmin ? `
-<button class="delBtn" onclick="event.stopPropagation();del(${i})">
+<button class="del" onclick="del('${key}')">
 🗑 حذف
 </button>
 ` : ""}
@@ -290,49 +232,11 @@ ${isAdmin ? `
 });
 }
 
-/* حذف */
-function del(i){
-if(confirm("حذف المنتج؟")){
-products.splice(i,1);
-save();
-render();
-}
-}
-
-/* modal */
-function openProduct(i){
-selected=i;
-let p=products[i];
-
-document.getElementById("modal").style.display="flex";
-document.getElementById("mimg").src=p.image;
-document.getElementById("mname").innerText=p.name;
-}
-
-function closeModal(){
-document.getElementById("modal").style.display="none";
-}
-
-function addFromModal(){
-cart.push(products[selected]);
-document.getElementById("count").innerText=cart.length;
-closeModal();
-}
-
-function addCart(i){
-cart.push(products[i]);
+/* سلة */
+window.addCart = function(){
+cart.push(1);
 document.getElementById("count").innerText=cart.length;
 }
-
-function showCart(){
-let text="طلب:\n";
-cart.forEach(i=>{
-text+=i.name+"\n";
-});
-window.open("https://wa.me/966591007353?text="+encodeURIComponent(text));
-}
-
-render();
 
 </script>
 
