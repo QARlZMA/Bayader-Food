@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بيادر الغذاء للحلويات</title>
+
+<style>
+:root{
+--main:#d9792b;
+--dark:#3e2723;
+}
+
+body{
+margin:0;
+font-family:Cairo,sans-serif;
+background:linear-gradient(135deg,#fdf5e6,#f7e8d0);
+}
+
+/* 🔝 هيدر */
+header{
+background:linear-gradient(135deg,var(--dark),#5d4037);
+color:white;
+text-align:center;
+padding:40px;
+position:relative;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+.logo{
+width:90px;
+border-radius:50%;
+background:white;
+padding:5px;
+}
+
+/* 🔐 زر مخفي */
+#loginBtn{
+position:absolute;
+top:10px;
+left:10px;
+background:rgba(255,255,255,0.15);
+color:white;
+border:none;
+padding:8px 12px;
+border-radius:10px;
+cursor:pointer;
+font-size:12px;
+}
+
+/* 📦 كونتينر */
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+/* 🔥 سحب الصور (للأدمن فقط) */
+#dropZone{
+border:2px dashed var(--main);
+padding:25px;
+text-align:center;
+border-radius:15px;
+margin-bottom:20px;
+cursor:pointer;
+background:#fff7ef;
+font-weight:bold;
+color:var(--main);
+transition:0.3s;
+display:none;
+}
+
+#dropZone:hover{
+background:#ffe2c7;
+transform:scale(1.02);
+}
+
+#dropZone.dragover{
+background:#ffd3a8;
+}
+
+/* 🧑‍💼 لوحة الأدمن */
+.admin{
+display:none;
+background:white;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+box-shadow:0 10px 20px rgba(0,0,0,0.1);
+}
+
+input{
+width:100%;
+padding:10px;
+margin:5px 0;
+border-radius:10px;
+border:1px solid #ddd;
+}
+
+/* 🛍 المنتجات */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:white;
+border-radius:20px;
+overflow:hidden;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
+transition:0.3s;
+cursor:pointer;
+}
+
+.card:hover{
+transform:translateY(-8px);
+box-shadow:0 20px 40px rgba(0,0,0,0.15);
+}
+
+.card img{
+width:100%;
+height:180px;
+object-fit:cover;
+}
+
+.card-body{
+padding:15px;
+text-align:center;
+}
+
+.price{
+color:var(--main);
+font-weight:bold;
+}
+
+/* 🗑 زر حذف */
+.delBtn{
+background:linear-gradient(135deg,#e74c3c,#c0392b);
+color:white;
+border:none;
+padding:10px;
+border-radius:10px;
+width:100%;
+margin-top:5px;
+cursor:pointer;
+}
+
+/* 🛒 سلة */
+.cart{
+position:fixed;
+bottom:20px;
+left:20px;
+background:var(--dark);
+color:white;
+padding:12px 20px;
+border-radius:50px;
+cursor:pointer;
+box-shadow:0 10px 20px rgba(0,0,0,0.2);
+}
+
+/* 🖼 modal */
+#modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.6);
+justify-content:center;
+align-items:center;
+}
+
+.modal-box{
+background:white;
+padding:20px;
+border-radius:20px;
+width:300px;
+text-align:center;
+}
+
+.modal-box img{
+width:100%;
+border-radius:10px;
+}
+
+.close{
+position:absolute;
+top:10px;
+left:10px;
+cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+<button id="loginBtn" onclick="login()">🔐 مدير</button>
+
+<img src="logo.png" class="logo">
+<h1>شركة بيادر الغذاء للحلويات</h1>
+<p>شوكولاتة • بسكويت • بطاطس</p>
+</header>
+
+<div class="container">
+
+<!-- 🔥 سحب صور للأدمن فقط -->
+<div id="dropZone">اسحب صورة هنا لإضافة منتج</div>
+<input type="file" id="fileInput" hidden>
+
+<!-- 👨‍💼 لوحة الأدمن -->
+<div class="admin" id="adminBox">
+<h3>إضافة منتج يدوي</h3>
+<input type="text" id="name" placeholder="اسم المنتج">
+<input type="number" id="price" placeholder="السعر">
+<button onclick="addProduct()">إضافة</button>
+</div>
+
+<div class="grid" id="products"></div>
+
+</div>
+
+<div class="cart" onclick="showCart()">
+🛒 السلة (<span id="count">0</span>)
+</div>
+
+<!-- modal -->
+<div id="modal">
+<div class="modal-box">
+<span class="close" onclick="closeModal()">❌</span>
+<img id="mimg">
+<h3 id="mname"></h3>
+<p id="mprice"></p>
+<button onclick="addFromModal()">إضافة</button>
+</div>
+</div>
+
+<script>
+
+let products = JSON.parse(localStorage.getItem("p")) || [];
+let cart = [];
+let isAdmin = false;
+let tempImage = null;
+let selected = null;
+
+/* 🔐 دخول */
+function login(){
+let pass = prompt("كلمة السر:");
+if(pass === "1234"){
+isAdmin = true;
+document.getElementById("adminBox").style.display="block";
+document.getElementById("dropZone").style.display="block";
+document.getElementById("loginBtn").style.display="none";
+render();
+}
+}
+
+/* حفظ */
+function save(){
+localStorage.setItem("p", JSON.stringify(products));
+}
+
+/* إضافة */
+function addProduct(){
+let name=document.getElementById("name").value;
+let price=document.getElementById("price").value;
+
+if(!name || !price || !tempImage) return alert("أكمل البيانات");
+
+products.push({name,price,image:tempImage});
+save();
+render();
+}
+
+/* 📤 رفع صورة */
+function handleFile(file){
+let reader=new FileReader();
+reader.onload=e=>{
+tempImage=e.target.result;
+
+let name=prompt("اسم المنتج:");
+let price=prompt("السعر:");
+
+if(!name || !price) return;
+
+products.push({name,price,image:tempImage});
+save();
+render();
+};
+reader.readAsDataURL(file);
+}
+
+/* drag & drop */
+let dropZone=document.getElementById("dropZone");
+
+dropZone.onclick=()=>document.getElementById("fileInput").click();
+
+dropZone.addEventListener("dragover",e=>{
+e.preventDefault();
+dropZone.classList.add("dragover");
+});
+
+dropZone.addEventListener("dragleave",()=>{
+dropZone.classList.remove("dragover");
+});
+
+dropZone.addEventListener("drop",e=>{
+e.preventDefault();
+dropZone.classList.remove("dragover");
+handleFile(e.dataTransfer.files[0]);
+});
+
+document.getElementById("fileInput").addEventListener("change",e=>{
+handleFile(e.target.files[0]);
+});
+
+/* عرض */
+function render(){
+let div=document.getElementById("products");
+div.innerHTML="";
+
+products.forEach((p,i)=>{
+div.innerHTML+=`
+<div class="card" onclick="openProduct(${i})">
+<img src="${p.image}">
+<div class="card-body">
+
+<h3>${p.name}</h3>
+<div class="price">${p.price} ريال</div>
+
+<button onclick="event.stopPropagation();addCart(${i})">🛒 إضافة</button>
+
+${isAdmin ? `
+<button class="delBtn" onclick="event.stopPropagation();del(${i})">
+🗑 حذف
+</button>
+` : ""}
+
+</div>
+</div>
+`;
+});
+}
+
+/* حذف */
+function del(i){
+if(confirm("حذف المنتج؟")){
+products.splice(i,1);
+save();
+render();
+}
+}
+
+/* modal */
+function openProduct(i){
+selected=i;
+let p=products[i];
+
+document.getElementById("modal").style.display="flex";
+document.getElementById("mimg").src=p.image;
+document.getElementById("mname").innerText=p.name;
+document.getElementById("mprice").innerText=p.price+" ريال";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+function addFromModal(){
+cart.push(products[selected]);
+document.getElementById("count").innerText=cart.length;
+closeModal();
+}
+
+function addCart(i){
+cart.push(products[i]);
+document.getElementById("count").innerText=cart.length;
+}
+
+function showCart(){
+let text="طلب:\n";
+cart.forEach(i=>{
+text+=i.name+" - "+i.price+" ريال\n";
+});
+window.open("https://wa.me/966591007353?text="+encodeURIComponent(text));
+}
+
+render();
+
+</script>
+
+</body>
+</html>
