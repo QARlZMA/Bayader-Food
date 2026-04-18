@@ -143,9 +143,17 @@ let cart = [];
 
 const productsRef = ref(db,"products");
 
-/* تحميل المنتجات */
+/* تحميل البيانات */
 onValue(productsRef,(snap)=>{
-render(snap.val() || {});
+let data = snap.val();
+
+if(!data){
+document.getElementById("products").innerHTML =
+"<p style='text-align:center'>لا توجد منتجات</p>";
+return;
+}
+
+render(data);
 });
 
 /* دخول مدير */
@@ -155,11 +163,12 @@ if(pass==="1234"){
 isAdmin=true;
 document.getElementById("dropZone").style.display="block";
 document.getElementById("loginBtn").style.display="none";
+alert("تم الدخول كمدير");
 }
 }
 
 /* رفع صورة */
-function handleFile(file){
+window.handleFile = function(file){
 let name = prompt("اسم المنتج:");
 if(!name) return;
 
@@ -167,16 +176,60 @@ let fileRef = sRef(storage,"products/"+Date.now());
 
 uploadBytes(fileRef,file).then(res=>{
 getDownloadURL(res.ref).then(url=>{
+
 push(productsRef,{
-name,
+name:name,
 image:url
 });
+
 });
 });
 }
 
-/* drag */
-let dz = document.getElementById("dropZone");
+/* حذف */
+window.del = function(key){
+remove(ref(db,"products/"+key));
+}
+
+/* عرض المنتجات */
+function render(data){
+
+let div=document.getElementById("products");
+div.innerHTML="";
+
+Object.entries(data).forEach(([key,p])=>{
+
+div.innerHTML+=`
+<div class="card">
+<img src="${p.image}">
+<div class="card-body">
+
+<h3>${p.name}</h3>
+
+<button onclick="addCart()">
+🛒 إضافة
+</button>
+
+${isAdmin ? `
+<button class="delBtn" onclick="del('${key}')">
+🗑 حذف
+</button>
+` : ""}
+
+</div>
+</div>
+`;
+});
+}
+
+/* سلة */
+window.addCart = function(){
+cart.push(1);
+document.getElementById("count").innerText = cart.length;
+}
+
+/* drag & drop */
+let dz=document.getElementById("dropZone");
 
 dz.onclick=()=>document.getElementById("fileInput").click();
 
@@ -198,47 +251,6 @@ document.getElementById("fileInput").addEventListener("change",e=>{
 handleFile(e.target.files[0]);
 });
 
-/* حذف */
-window.del = function(key){
-remove(ref(db,"products/"+key));
-}
-
-/* عرض */
-function render(data){
-let div=document.getElementById("products");
-div.innerHTML="";
-
-Object.entries(data).forEach(([key,p])=>{
-div.innerHTML+=`
-<div class="card">
-<img src="${p.image}">
-<div class="card-body">
-
-<h3>${p.name}</h3>
-
-<button onclick="addCart()">
-🛒 إضافة
-</button>
-
-${isAdmin ? `
-<button class="del" onclick="del('${key}')">
-🗑 حذف
-</button>
-` : ""}
-
-</div>
-</div>
-`;
-});
-}
-
-/* سلة */
-window.addCart = function(){
-cart.push(1);
-document.getElementById("count").innerText=cart.length;
-}
-
 </script>
-
 </body>
 </html>
