@@ -197,53 +197,78 @@ border-radius:10px;
 </div>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } 
+from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
-let products = JSON.parse(localStorage.getItem("p")) || [];
+/* 🔥 Firebase */
+const firebaseConfig = {
+  apiKey: "AIzaSyCBylxNbBu1vqp0vBzFHuIKQTwKnONB2KI",
+  authDomain: "bayader-food.firebaseapp.com",
+  databaseURL: "https://bayader-food-default-rtdb.firebaseio.com",
+  projectId: "bayader-food",
+  storageBucket: "bayader-food.firebasestorage.app",
+  messagingSenderId: "977142574677",
+  appId: "1:977142574677:web:86f37e2c11259a9d886edc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* بيانات */
+let products = [];
 let cart = [];
-let isAdmin=false;
-let selected=null;
+let isAdmin = false;
+let selected = null;
 
-/* دخول */
-function login(){
-let pass=prompt("كلمة السر:");
-if(pass==="1234"){
-isAdmin=true;
-document.getElementById("dropZone").style.display="block";
-document.getElementById("loginBtn").style.display="none";
+/* 🔐 دخول مدير */
+window.login = function(){
+let pass = prompt("كلمة السر:");
+if(pass === "1234"){
+isAdmin = true;
+document.getElementById("dropZone").style.display = "block";
+document.getElementById("loginBtn").style.display = "none";
+alert("تم الدخول كمدير");
+}
+};
+
+/* 🔥 تحميل المنتجات من Firebase */
+onValue(ref(db, "products"), (snapshot)=>{
+products = snapshot.val() || [];
 render();
-}
-}
+});
 
-/* حفظ */
+/* 💾 حفظ */
 function save(){
-localStorage.setItem("p",JSON.stringify(products));
+set(ref(db, "products"), products);
 }
 
-/* رفع صورة */
+/* 📤 رفع صورة */
 function handleFile(file){
-let reader=new FileReader();
-reader.onload=e=>{
-let name=prompt("اسم المنتج:");
+let reader = new FileReader();
+
+reader.onload = e=>{
+let name = prompt("اسم المنتج:");
 if(!name) return;
 
 products.push({
 name,
-image:e.target.result
+image: e.target.result
 });
 
 save();
-render();
 };
+
 reader.readAsDataURL(file);
 }
 
-/* drag */
-let dropZone=document.getElementById("dropZone");
+/* drag & drop */
+let dropZone = document.getElementById("dropZone");
 
-dropZone.onclick=()=>document.getElementById("fileInput").click();
+dropZone.onclick = ()=>document.getElementById("fileInput").click();
 
-dropZone.addEventListener("dragover",e=>{
+dropZone.addEventListener("dragover",(e)=>{
 e.preventDefault();
 dropZone.style.background="#ffe2c7";
 });
@@ -252,22 +277,22 @@ dropZone.addEventListener("dragleave",()=>{
 dropZone.style.background="#fff7ef";
 });
 
-dropZone.addEventListener("drop",e=>{
+dropZone.addEventListener("drop",(e)=>{
 e.preventDefault();
 handleFile(e.dataTransfer.files[0]);
 });
 
-document.getElementById("fileInput").addEventListener("change",e=>{
+document.getElementById("fileInput").addEventListener("change",(e)=>{
 handleFile(e.target.files[0]);
 });
 
-/* عرض */
+/* 🧱 عرض المنتجات */
 function render(){
-let div=document.getElementById("products");
-div.innerHTML="";
+let div = document.getElementById("products");
+div.innerHTML = "";
 
 products.forEach((p,i)=>{
-div.innerHTML+=`
+div.innerHTML += `
 <div class="card" onclick="openProduct(${i})">
 <img src="${p.image}">
 <div class="card-body">
@@ -290,49 +315,51 @@ ${isAdmin ? `
 });
 }
 
-/* حذف */
-function del(i){
+/* 🗑 حذف */
+window.del = function(i){
 if(confirm("حذف المنتج؟")){
 products.splice(i,1);
 save();
-render();
 }
-}
+};
 
-/* modal */
-function openProduct(i){
-selected=i;
-let p=products[i];
+/* 📦 فتح منتج */
+window.openProduct = function(i){
+selected = i;
+let p = products[i];
 
 document.getElementById("modal").style.display="flex";
-document.getElementById("mimg").src=p.image;
-document.getElementById("mname").innerText=p.name;
-}
+document.getElementById("mimg").src = p.image;
+document.getElementById("mname").innerText = p.name;
+};
 
-function closeModal(){
+/* ❌ إغلاق */
+window.closeModal = function(){
 document.getElementById("modal").style.display="none";
-}
+};
 
-function addFromModal(){
+/* ➕ إضافة من مودال */
+window.addFromModal = function(){
 cart.push(products[selected]);
-document.getElementById("count").innerText=cart.length;
+document.getElementById("count").innerText = cart.length;
 closeModal();
-}
+};
 
-function addCart(i){
+/* 🛒 إضافة سلة */
+window.addCart = function(i){
 cart.push(products[i]);
-document.getElementById("count").innerText=cart.length;
-}
+document.getElementById("count").innerText = cart.length;
+};
 
-function showCart(){
-let text="طلب:\n";
+/* 📲 واتساب */
+window.showCart = function(){
+let text = "طلب:\n";
 cart.forEach(i=>{
-text+=i.name+"\n";
+text += i.name + "\n";
 });
-window.open("https://wa.me/966591007353?text="+encodeURIComponent(text));
-}
 
-render();
+window.open("https://wa.me/966591007353?text=" + encodeURIComponent(text));
+};
 
 </script>
 
