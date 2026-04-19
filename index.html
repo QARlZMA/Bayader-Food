@@ -30,7 +30,6 @@ border-bottom-left-radius:20px;
 border-bottom-right-radius:20px;
 }
 
-/* الشعار */
 .logo{
 width:85px;
 height:85px;
@@ -47,7 +46,7 @@ animation:logo 3s ease-in-out infinite;
 100%{transform:translateY(0)}
 }
 
-/* الأقسام */
+/* الفلاتر */
 .filter{
 display:flex;
 flex-wrap:wrap;
@@ -124,7 +123,7 @@ cursor:pointer;
 z-index:999;
 }
 
-/* زر الأدمن */
+/* الأدمن */
 #loginBtn{
 position:fixed;
 top:10px;
@@ -139,7 +138,6 @@ z-index:9999;
 cursor:pointer;
 }
 
-/* زر إضافة */
 #addBtn{
 display:none;
 position:fixed;
@@ -155,7 +153,7 @@ border:none;
 z-index:9999;
 }
 
-/* المودال */
+/* المودالات */
 .modal{
 display:none;
 position:fixed;
@@ -183,28 +181,7 @@ font-size:22px;
 cursor:pointer;
 }
 
-/* تكبير الصورة */
-#imgModal{
-display:none;
-justify-content:center;
-align-items:center;
-}
-
-#imgModal img{
-max-width:90%;
-max-height:90%;
-}
-
-/* صورة الكمية */
-#qtyImage{
-width:100%;
-max-height:300px;
-object-fit:contain;
-background:#f5f5f5;
-padding:10px;
-border-radius:12px;
-}
-
+/* السلة */
 .cartItem{
 display:flex;
 gap:10px;
@@ -220,6 +197,19 @@ border-radius:8px;
 object-fit:cover;
 }
 
+/* 🔥 تكبير الصورة */
+#imgModal{
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+#bigImg{
+max-width:90%;
+max-height:90%;
+object-fit:contain;
+border-radius:12px;
+}
 </style>
 </head>
 
@@ -228,33 +218,40 @@ object-fit:cover;
 <button id="loginBtn" onclick="openLogin()">🔐</button>
 
 <header>
+<a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
 <img src="logo.png" class="logo">
+</a>
+
 <h2>بيادر الغذاء</h2>
 <p>شوكولاتة • بسكويت • بطاطس</p>
+
+<a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
+<button>📍 موقعنا</button>
+</a>
 </header>
 
-<!-- الأقسام -->
 <div class="filter">
 <button onclick="filter('all')">الكل</button>
 <button onclick="filter('شوكولاتة')">شوكولاتة</button>
 <button onclick="filter('بسكويت')">بسكويت</button>
 <button onclick="filter('بطاطس')">بطاطس</button>
 <button onclick="filter('حلاوة')">حلاوة</button>
-<button onclick="filter('جلي')">جلي</button>
-<button onclick="filter('مصاص')">مصاص</button>
 </div>
 
-<!-- المنتجات -->
 <div class="grid" id="products"></div>
 
-<!-- السلة -->
 <div class="cart" onclick="openCart()">
 🛒 (<span id="count">0</span>)
 </div>
 
 <button id="addBtn" onclick="openAdd()">+</button>
 
-<!-- LOGIN -->
+<!-- 🔥 تكبير الصورة -->
+<div class="modal" id="imgModal">
+<img id="bigImg">
+</div>
+
+<!-- مودالات -->
 <div class="modal" id="loginModal">
 <div class="box">
 <span class="closeX" onclick="loginModal.style.display='none'">✖</span>
@@ -264,27 +261,30 @@ object-fit:cover;
 </div>
 </div>
 
-<!-- ADD -->
 <div class="modal" id="addModal">
 <div class="box">
 <span class="closeX" onclick="addModal.style.display='none'">✖</span>
 
-<h3>إضافة منتج</h3>
+<h3>إضافة / تعديل منتج</h3>
+
 <input id="pName" placeholder="اسم" style="width:100%;padding:8px">
+
 <select id="pCategory" style="width:100%;padding:8px">
 <option>شوكولاتة</option>
 <option>بسكويت</option>
 <option>بطاطس</option>
 <option>حلاوة</option>
 </select>
+
 <input type="file" id="pImage">
+
 <input id="pBox" placeholder="علب" style="width:100%;padding:8px">
 <input id="pCarton" placeholder="كراتين" style="width:100%;padding:8px">
-<button onclick="addProduct()">إضافة</button>
+
+<button onclick="addProduct()">حفظ</button>
 </div>
 </div>
 
-<!-- CART -->
 <div class="modal" id="cartModal">
 <div class="box">
 <span class="closeX" onclick="cartModal.style.display='none'">✖</span>
@@ -294,12 +294,11 @@ object-fit:cover;
 </div>
 </div>
 
-<!-- كمية -->
 <div class="modal" id="qtyModal">
 <div class="box">
 <span class="closeX" onclick="qtyModal.style.display='none'">✖</span>
 
-<img id="qtyImage">
+<img id="qtyImage" style="width:100%;max-height:200px">
 <p id="qtyName"></p>
 
 <select id="qtyType">
@@ -313,68 +312,73 @@ object-fit:cover;
 </div>
 </div>
 
-<!-- تكبير -->
-<div class="modal" id="imgModal">
-<img id="bigImg">
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
 const firebaseConfig = {
-databaseURL:"https://bayader-food-default-rtdb.firebaseio.com",
-apiKey:"AIzaSy..."
+databaseURL:"https://bayader-food-default-rtdb.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let products=[];
-let cart=[];
-let selectedIndex=null;
-let filterType="all";
-let isAdmin=false;
+let products=[], cart=[], selectedIndex=null;
+let filterType="all", isAdmin=false;
 
-/* تحميل */
 onValue(ref(db,"products"),s=>{
 products=s.val()||[];
 render();
 });
 
-/* عرض */
 function render(){
 let div=document.getElementById("products");
 div.innerHTML="";
 
-let list=filterType==="all"?products:products.filter(p=>p.category===filterType);
+let list=filterType==="all"
+? products
+: products.filter(p=>p.category===filterType);
 
 list.forEach((p,i)=>{
+
 div.innerHTML+=`
 <div class="card">
 
 <img src="${p.image}" onclick="openImg('${p.image}')">
 
 <div class="card-body">
+
 <h3>${p.name}</h3>
-<p>علب:${p.boxStock||0}</p>
-<p>كراتين:${p.cartonStock||0}</p>
+
+<p>علب: ${p.boxStock ?? 0}</p>
+<p>كراتين: ${p.cartonStock ?? 0}</p>
 
 <button onclick="openQty(${i})">إضافة</button>
-</div>
 
+${isAdmin?`
+<button onclick="editProduct(${i})">✏️ تعديل</button>
+<button onclick="deleteProduct(${i})" style="background:red">🗑 حذف</button>
+`:``}
+
+</div>
 </div>`;
 });
 }
 
-/* فلتر */
-window.filter=(t)=>{
-filterType=t;
-render();
+/* 🔥 تكبير الصورة */
+window.openImg=(src)=>{
+bigImg.src=src;
+imgModal.style.display="flex";
 };
 
-/* login */
+imgModal.onclick=()=>{
+imgModal.style.display="none";
+};
+
+/* باقي الوظائف */
+window.filter=t=>{filterType=t;render();};
+
 window.openLogin=()=>loginModal.style.display="flex";
 
 window.login=()=>{
@@ -382,37 +386,66 @@ if(pass.value==="1234"){
 isAdmin=true;
 addBtn.style.display="block";
 loginModal.style.display="none";
+render();
 }
 };
 
-/* add */
-window.openAdd=()=>addModal.style.display="flex";
+window.openAdd=()=>{
+selectedIndex=null;
+addModal.style.display="flex";
+};
 
 window.addProduct=()=>{
 
 let file=pImage.files[0];
-if(!file) return;
 
-let reader=new FileReader();
-
-reader.onload=()=>{
-products.push({
+let save=(img)=>{
+let data={
 name:pName.value,
 category:pCategory.value,
-image:reader.result,
+image:img,
 boxStock:+pBox.value,
 cartonStock:+pCarton.value
-});
+};
+
+if(selectedIndex!==null){
+products[selectedIndex]=data;
+}else{
+products.push(data);
+}
 
 set(ref(db,"products"),products);
 addModal.style.display="none";
 };
 
-reader.readAsDataURL(file);
+if(file){
+let r=new FileReader();
+r.onload=()=>save(r.result);
+r.readAsDataURL(file);
+}else{
+save("");
+}
 };
 
-/* qty */
-window.openQty=(i)=>{
+window.deleteProduct=i=>{
+if(confirm("حذف المنتج؟")){
+products.splice(i,1);
+set(ref(db,"products"),products);
+}
+};
+
+window.editProduct=i=>{
+selectedIndex=i;
+
+pName.value=products[i].name;
+pCategory.value=products[i].category;
+pBox.value=products[i].boxStock;
+pCarton.value=products[i].cartonStock;
+
+addModal.style.display="flex";
+};
+
+window.openQty=i=>{
 selectedIndex=i;
 qtyName.innerText=products[i].name;
 qtyImage.src=products[i].image;
@@ -431,44 +464,22 @@ count.innerText=cart.length;
 qtyModal.style.display="none";
 };
 
-/* cart */
 window.openCart=()=>{
-renderCart();
+let div=document.getElementById("cartList");
+div.innerHTML="";
+cart.forEach(p=>{
+div.innerHTML+=`<div class="cartItem">${p.name} - ${p.qty}</div>`;
+});
 cartModal.style.display="flex";
 };
 
-function renderCart(){
-let div=document.getElementById("cartList");
-div.innerHTML="";
-
-cart.forEach((p,i)=>{
-div.innerHTML+=`
-<div class="cartItem">
-<img src="${p.image}">
-<div>
-<b>${p.name}</b><br>
-${p.type} - ${p.qty}
-</div>
-</div>`;
-});
-}
-
-/* واتساب */
 window.sendWhatsApp=()=>{
 let msg="طلب:\n";
 cart.forEach(p=>{
-msg+=`${p.name} ${p.type} ${p.qty}\n`;
+msg+=`${p.name} ${p.qty}\n`;
 });
 window.open("https://wa.me/966591007353?text="+encodeURIComponent(msg));
 };
-
-/* تكبير */
-window.openImg=(src)=>{
-bigImg.src=src;
-imgModal.style.display="flex";
-};
-
-imgModal.onclick=()=>imgModal.style.display="none";
 
 </script>
 
