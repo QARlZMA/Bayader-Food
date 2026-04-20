@@ -10,8 +10,8 @@ body{
   margin:0;
   font-family:Cairo;
   background:linear-gradient(-45deg,#f7e8d0,#fff,#ffe7c2,#fff3e6);
-  background-size:400% 400%;
-  animation:bg 10s ease infinite;
+  background-size:200% 200%;
+  animation:bg 18s ease infinite;
 }
 
 @keyframes bg{
@@ -42,7 +42,7 @@ header{
 
 @keyframes logo{
   0%{transform:translateY(0)}
-  50%{transform:translateY(-8px)}
+  50%{transform:translateY(-6px)}
   100%{transform:translateY(0)}
 }
 
@@ -76,7 +76,7 @@ header{
   background:white;
   border-radius:16px;
   overflow:hidden;
-  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  box-shadow:0 3px 10px rgba(0,0,0,0.08);
   display:flex;
   flex-direction:column;
 }
@@ -183,18 +183,8 @@ button{
 
 /* السلة */
 .cartItem{
-  display:flex;
-  gap:10px;
-  align-items:center;
   padding:8px;
   border-bottom:1px solid #eee;
-}
-
-.cartItem img{
-  width:50px;
-  height:50px;
-  border-radius:8px;
-  object-fit:cover;
 }
 
 /* تكبير الصورة */
@@ -248,7 +238,6 @@ button{
 
 <button id="addBtn" onclick="openAdd()">+</button>
 
-<!-- تكبير الصورة -->
 <div class="modal" id="imgModal">
   <img id="bigImg">
 </div>
@@ -269,7 +258,6 @@ button{
     <h3>إضافة / تعديل منتج</h3>
 
     <input id="pName" placeholder="اسم" style="width:100%;padding:8px">
-
     <select id="pCategory" style="width:100%;padding:8px">
       <option>شوكولاتة</option>
       <option>بسكويت</option>
@@ -319,11 +307,10 @@ button{
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
-const firebaseConfig = {
+const app = initializeApp({
   databaseURL:"https://bayader-food-default-rtdb.firebaseio.com"
-};
+});
 
-const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let products = [], cart = [], selectedIndex = null;
@@ -335,45 +322,54 @@ onValue(ref(db,"products"), s=>{
 });
 
 function render(){
-  let div = document.getElementById("products");
+  const div = document.getElementById("products");
   div.innerHTML = "";
 
-  let list = filterType === "all"
+  const list = filterType === "all"
     ? products
     : products.filter(p => p.category === filterType);
 
+  const fragment = document.createDocumentFragment();
+
   list.forEach((p,i)=>{
-    div.innerHTML += `
-      <div class="card">
-        <img src="${p.image}" onclick="openImg('${p.image}')">
-        <div class="card-body">
-          <h3>${p.name}</h3>
-          <p>علب: ${p.boxStock ?? 0}</p>
-          <p>كراتين: ${p.cartonStock ?? 0}</p>
+    const card = document.createElement("div");
+    card.className = "card";
 
-          <button onclick="openQty(${i})">إضافة</button>
-
-          ${isAdmin ? `
-            <button onclick="editProduct(${i})">✏️ تعديل</button>
-            <button onclick="deleteProduct(${i})" style="background:red">🗑 حذف</button>
-          ` : ""}
-        </div>
+    card.innerHTML = `
+      <img loading="lazy" src="${p.image}">
+      <div class="card-body">
+        <h3>${p.name}</h3>
+        <p>علب: ${p.boxStock ?? 0}</p>
+        <p>كراتين: ${p.cartonStock ?? 0}</p>
+        <button class="addBtn">إضافة</button>
+        ${isAdmin ? `
+          <button class="editBtn">✏️ تعديل</button>
+          <button class="deleteBtn" style="background:red">🗑 حذف</button>
+        ` : ""}
       </div>
     `;
+
+    card.querySelector("img").onclick = ()=> openImg(p.image);
+    card.querySelector(".addBtn").onclick = ()=> openQty(i);
+
+    if(isAdmin){
+      card.querySelector(".editBtn").onclick = ()=> editProduct(i);
+      card.querySelector(".deleteBtn").onclick = ()=> deleteProduct(i);
+    }
+
+    fragment.appendChild(card);
   });
+
+  div.appendChild(fragment);
 }
 
-/* تكبير الصورة */
 window.openImg = (src)=>{
   bigImg.src = src;
   imgModal.style.display = "flex";
 };
 
-imgModal.onclick = ()=>{
-  imgModal.style.display = "none";
-};
+imgModal.onclick = ()=> imgModal.style.display="none";
 
-/* وظائف */
 window.filter = t => { filterType = t; render(); };
 window.openLogin = ()=> loginModal.style.display="flex";
 
@@ -414,9 +410,27 @@ window.addProduct = ()=>{
   };
 
   if(file){
-    let r = new FileReader();
-    r.onload = ()=> save(r.result);
-    r.readAsDataURL(file);
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = e=> img.src = e.target.result;
+
+    img.onload = ()=>{
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+
+      const maxWidth = 400;
+      const scale = maxWidth / img.width;
+
+      canvas.width = maxWidth;
+      canvas.height = img.height * scale;
+
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+
+      save(canvas.toDataURL("image/jpeg",0.7));
+    };
+
+    reader.readAsDataURL(file);
   }else{
     save("");
   }
@@ -448,8 +462,6 @@ window.openQty = i=>{
 window.confirmAdd = ()=>{
   cart.push({
     name:products[selectedIndex].name,
-    image:products[selectedIndex].image,
-    type:qtyType.value,
     qty:+qtyInput.value
   });
 
@@ -458,17 +470,19 @@ window.confirmAdd = ()=>{
 };
 
 window.openCart = ()=>{
-  let div = document.getElementById("cartList");
+  const div = document.getElementById("cartList");
   div.innerHTML = "";
 
+  const fragment = document.createDocumentFragment();
+
   cart.forEach(p=>{
-    div.innerHTML += `
-      <div class="cartItem">
-        ${p.name} - ${p.qty}
-      </div>
-    `;
+    const item = document.createElement("div");
+    item.className = "cartItem";
+    item.textContent = `${p.name} - ${p.qty}`;
+    fragment.appendChild(item);
   });
 
+  div.appendChild(fragment);
   cartModal.style.display="flex";
 };
 
