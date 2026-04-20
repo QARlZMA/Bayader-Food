@@ -7,208 +7,208 @@
 
 <style>
 body{
-margin:0;
-font-family:Cairo;
-background:linear-gradient(-45deg,#f7e8d0,#fff,#ffe7c2,#fff3e6);
-background-size:400% 400%;
-animation:bg 10s ease infinite;
+  margin:0;
+  font-family:Cairo;
+  background:linear-gradient(-45deg,#f7e8d0,#fff,#ffe7c2,#fff3e6);
+  background-size:400% 400%;
+  animation:bg 10s ease infinite;
 }
 
 @keyframes bg{
-0%{background-position:0% 50%}
-50%{background-position:100% 50%}
-100%{background-position:0% 50%}
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 /* الهيدر */
 header{
-background:linear-gradient(135deg,#3e2723,#5d4037);
-color:white;
-text-align:center;
-padding:25px;
-border-bottom-left-radius:20px;
-border-bottom-right-radius:20px;
+  background:linear-gradient(135deg,#3e2723,#5d4037);
+  color:white;
+  text-align:center;
+  padding:25px;
+  border-bottom-left-radius:20px;
+  border-bottom-right-radius:20px;
 }
 
 .logo{
-width:85px;
-height:85px;
-border-radius:50%;
-background:white;
-padding:5px;
-object-fit:cover;
-animation:logo 3s ease-in-out infinite;
+  width:85px;
+  height:85px;
+  border-radius:50%;
+  background:white;
+  padding:5px;
+  object-fit:cover;
+  animation:logo 3s ease-in-out infinite;
 }
 
 @keyframes logo{
-0%{transform:translateY(0)}
-50%{transform:translateY(-8px)}
-100%{transform:translateY(0)}
+  0%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+  100%{transform:translateY(0)}
 }
 
 /* الفلاتر */
 .filter{
-display:flex;
-flex-wrap:wrap;
-gap:6px;
-padding:10px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  padding:10px;
 }
 
 .filter button{
-flex:1;
-padding:8px;
-border:none;
-border-radius:12px;
-background:linear-gradient(135deg,#d9792b,#ff9f43);
-color:white;
-cursor:pointer;
+  flex:1;
+  padding:8px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#d9792b,#ff9f43);
+  color:white;
+  cursor:pointer;
 }
 
 /* المنتجات */
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
-gap:10px;
-padding:10px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
+  gap:10px;
+  padding:10px;
 }
 
 .card{
-background:white;
-border-radius:16px;
-overflow:hidden;
-box-shadow:0 6px 18px rgba(0,0,0,0.12);
-display:flex;
-flex-direction:column;
+  background:white;
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 6px 18px rgba(0,0,0,0.12);
+  display:flex;
+  flex-direction:column;
 }
 
 .card img{
-width:100%;
-height:150px;
-object-fit:cover;
-cursor:pointer;
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  cursor:pointer;
 }
 
 .card-body{
-padding:10px;
-display:flex;
-flex-direction:column;
-gap:5px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
 }
 
 /* الأزرار */
 button{
-padding:6px;
-border:none;
-border-radius:8px;
-background:#d9792b;
-color:white;
-cursor:pointer;
-font-size:12px;
+  padding:6px;
+  border:none;
+  border-radius:8px;
+  background:#d9792b;
+  color:white;
+  cursor:pointer;
+  font-size:12px;
 }
 
 .card button{
-background:linear-gradient(135deg,#1f8a70,#2dbd9c);
+  background:linear-gradient(135deg,#1f8a70,#2dbd9c);
 }
 
 /* السلة */
 .cart{
-position:fixed;
-bottom:15px;
-left:15px;
-background:#3e2723;
-color:white;
-padding:10px 15px;
-border-radius:25px;
-cursor:pointer;
-z-index:999;
+  position:fixed;
+  bottom:15px;
+  left:15px;
+  background:#3e2723;
+  color:white;
+  padding:10px 15px;
+  border-radius:25px;
+  cursor:pointer;
+  z-index:999;
 }
 
 /* الأدمن */
 #loginBtn{
-position:fixed;
-top:10px;
-left:10px;
-width:40px;
-height:40px;
-border-radius:50%;
-background:#000;
-color:#fff;
-border:none;
-z-index:9999;
-cursor:pointer;
+  position:fixed;
+  top:10px;
+  left:10px;
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  background:#000;
+  color:#fff;
+  border:none;
+  z-index:9999;
+  cursor:pointer;
 }
 
 #addBtn{
-display:none;
-position:fixed;
-bottom:80px;
-left:20px;
-width:55px;
-height:55px;
-border-radius:50%;
-font-size:22px;
-background:#1f8a70;
-color:white;
-border:none;
-z-index:9999;
+  display:none;
+  position:fixed;
+  bottom:80px;
+  left:20px;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  font-size:22px;
+  background:#1f8a70;
+  color:white;
+  border:none;
+  z-index:9999;
 }
 
 /* المودالات */
 .modal{
-display:none;
-position:fixed;
-inset:0;
-background:#000000cc;
-justify-content:center;
-align-items:center;
-z-index:99999;
+  display:none;
+  position:fixed;
+  inset:0;
+  background:#000000cc;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
 }
 
 .box{
-background:white;
-padding:15px;
-width:90%;
-max-width:420px;
-border-radius:16px;
-position:relative;
+  background:white;
+  padding:15px;
+  width:90%;
+  max-width:420px;
+  border-radius:16px;
+  position:relative;
 }
 
 .closeX{
-position:absolute;
-top:8px;
-left:10px;
-font-size:22px;
-cursor:pointer;
+  position:absolute;
+  top:8px;
+  left:10px;
+  font-size:22px;
+  cursor:pointer;
 }
 
 /* السلة */
 .cartItem{
-display:flex;
-gap:10px;
-align-items:center;
-padding:8px;
-border-bottom:1px solid #eee;
+  display:flex;
+  gap:10px;
+  align-items:center;
+  padding:8px;
+  border-bottom:1px solid #eee;
 }
 
 .cartItem img{
-width:50px;
-height:50px;
-border-radius:8px;
-object-fit:cover;
+  width:50px;
+  height:50px;
+  border-radius:8px;
+  object-fit:cover;
 }
 
-/* 🔥 تكبير الصورة */
+/* تكبير الصورة */
 #imgModal{
-display:none;
-justify-content:center;
-align-items:center;
+  display:none;
+  justify-content:center;
+  align-items:center;
 }
 
 #bigImg{
-max-width:90%;
-max-height:90%;
-object-fit:contain;
-border-radius:12px;
+  max-width:90%;
+  max-height:90%;
+  object-fit:contain;
+  border-radius:12px;
 }
 </style>
 </head>
@@ -218,269 +218,269 @@ border-radius:12px;
 <button id="loginBtn" onclick="openLogin()">🔐</button>
 
 <header>
-<a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
-<img src="logo.png" class="logo">
-</a>
-
-<h2>بيادر الغذاء</h2>
-<p>شوكولاتة • بسكويت • بطاطس</p>
-
-<a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
-<button>📍 موقعنا</button>
-</a>
+  <a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
+    <img src="logo.png" class="logo">
+  </a>
+  <h2>شركة بيادر الغذاء قسم الحلويات</h2>
+  <p>شوكولاتة • بسكويت • بطاطس</p>
+  <a href="https://maps.app.goo.gl/cXQ9gA8hxuBaSKNH7" target="_blank">
+    <button>📍 موقعنا</button>
+  </a>
 </header>
 
 <div class="filter">
-<button onclick="filter('all')">الكل</button>
-<button onclick="filter('شوكولاتة')">شوكولاتة</button>
-<button onclick="filter('بسكويت')">بسكويت</button>
-<button onclick="filter('بطاطس')">بطاطس</button>
-<button onclick="filter('حلاوة')">حلاوة</button>
+  <button onclick="filter('all')">الكل</button>
+  <button onclick="filter('شوكولاتة')">شوكولاتة</button>
+  <button onclick="filter('بسكويت')">بسكويت</button>
+  <button onclick="filter('بطاطس')">بطاطس</button>
+  <button onclick="filter('حلاوة')">حلاوة</button>
+  <button onclick="filter('جلي')">جلي</button>
+  <button onclick="filter('مصاص')">مصاص</button>
+  <button onclick="filter('كيك')">كيك</button>
+  <button onclick="filter('لبان')">لبان</button>
 </div>
 
 <div class="grid" id="products"></div>
 
 <div class="cart" onclick="openCart()">
-🛒 (<span id="count">0</span>)
+  🛒 (<span id="count">0</span>)
 </div>
 
 <button id="addBtn" onclick="openAdd()">+</button>
 
-<!-- 🔥 تكبير الصورة -->
+<!-- تكبير الصورة -->
 <div class="modal" id="imgModal">
-<img id="bigImg">
+  <img id="bigImg">
 </div>
 
 <!-- مودالات -->
 <div class="modal" id="loginModal">
-<div class="box">
-<span class="closeX" onclick="loginModal.style.display='none'">✖</span>
-<h3>دخول الأدمن</h3>
-<input id="pass" type="password" style="width:100%;padding:10px">
-<button onclick="login()">دخول</button>
-</div>
+  <div class="box">
+    <span class="closeX" onclick="loginModal.style.display='none'">✖</span>
+    <h3>دخول الأدمن</h3>
+    <input id="pass" type="password" style="width:100%;padding:10px">
+    <button onclick="login()">دخول</button>
+  </div>
 </div>
 
 <div class="modal" id="addModal">
-<div class="box">
-<span class="closeX" onclick="addModal.style.display='none'">✖</span>
+  <div class="box">
+    <span class="closeX" onclick="addModal.style.display='none'">✖</span>
+    <h3>إضافة / تعديل منتج</h3>
 
-<h3>إضافة / تعديل منتج</h3>
+    <input id="pName" placeholder="اسم" style="width:100%;padding:8px">
 
-<input id="pName" placeholder="اسم" style="width:100%;padding:8px">
+    <select id="pCategory" style="width:100%;padding:8px">
+      <option>شوكولاتة</option>
+      <option>بسكويت</option>
+      <option>بطاطس</option>
+      <option>حلاوة</option>
+      <option>جلي</option>
+      <option>مصاص</option>
+      <option>كيك</option>
+      <option>لبان</option>
+    </select>
 
-<select id="pCategory" style="width:100%;padding:8px">
-<option>شوكولاتة</option>
-<option>بسكويت</option>
-<option>بطاطس</option>
-<option>حلاوة</option>
-</select>
+    <input type="file" id="pImage">
+    <input id="pBox" placeholder="علب" style="width:100%;padding:8px">
+    <input id="pCarton" placeholder="كراتين" style="width:100%;padding:8px">
 
-<input type="file" id="pImage">
-
-<input id="pBox" placeholder="علب" style="width:100%;padding:8px">
-<input id="pCarton" placeholder="كراتين" style="width:100%;padding:8px">
-
-<button onclick="addProduct()">حفظ</button>
-</div>
+    <button onclick="addProduct()">حفظ</button>
+  </div>
 </div>
 
 <div class="modal" id="cartModal">
-<div class="box">
-<span class="closeX" onclick="cartModal.style.display='none'">✖</span>
-<h3>السلة</h3>
-<div id="cartList"></div>
-<button onclick="sendWhatsApp()">إرسال واتساب</button>
-</div>
+  <div class="box">
+    <span class="closeX" onclick="cartModal.style.display='none'">✖</span>
+    <h3>السلة</h3>
+    <div id="cartList"></div>
+    <button onclick="sendWhatsApp()">إرسال واتساب</button>
+  </div>
 </div>
 
 <div class="modal" id="qtyModal">
-<div class="box">
-<span class="closeX" onclick="qtyModal.style.display='none'">✖</span>
+  <div class="box">
+    <span class="closeX" onclick="qtyModal.style.display='none'">✖</span>
 
-<img id="qtyImage" style="width:100%;max-height:200px">
-<p id="qtyName"></p>
+    <img id="qtyImage" style="width:100%;max-height:200px">
+    <p id="qtyName"></p>
 
-<select id="qtyType">
-<option>علبة</option>
-<option>كرتون</option>
-</select>
+    <select id="qtyType">
+      <option>علبة</option>
+      <option>كرتون</option>
+    </select>
 
-<input id="qtyInput" type="number" value="1">
-
-<button onclick="confirmAdd()">إضافة</button>
-</div>
+    <input id="qtyInput" type="number" value="1">
+    <button onclick="confirmAdd()">إضافة</button>
+  </div>
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
 import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
 const firebaseConfig = {
-databaseURL:"https://bayader-food-default-rtdb.firebaseio.com"
+  databaseURL:"https://bayader-food-default-rtdb.firebaseio.com"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-let products=[], cart=[], selectedIndex=null;
-let filterType="all", isAdmin=false;
+let products = [], cart = [], selectedIndex = null;
+let filterType = "all", isAdmin = false;
 
-onValue(ref(db,"products"),s=>{
-products=s.val()||[];
-render();
+onValue(ref(db,"products"), s=>{
+  products = s.val() || [];
+  render();
 });
 
 function render(){
-let div=document.getElementById("products");
-div.innerHTML="";
+  let div = document.getElementById("products");
+  div.innerHTML = "";
 
-let list=filterType==="all"
-? products
-: products.filter(p=>p.category===filterType);
+  let list = filterType === "all"
+    ? products
+    : products.filter(p => p.category === filterType);
 
-list.forEach((p,i)=>{
+  list.forEach((p,i)=>{
+    div.innerHTML += `
+      <div class="card">
+        <img src="${p.image}" onclick="openImg('${p.image}')">
+        <div class="card-body">
+          <h3>${p.name}</h3>
+          <p>علب: ${p.boxStock ?? 0}</p>
+          <p>كراتين: ${p.cartonStock ?? 0}</p>
 
-div.innerHTML+=`
-<div class="card">
+          <button onclick="openQty(${i})">إضافة</button>
 
-<img src="${p.image}" onclick="openImg('${p.image}')">
-
-<div class="card-body">
-
-<h3>${p.name}</h3>
-
-<p>علب: ${p.boxStock ?? 0}</p>
-<p>كراتين: ${p.cartonStock ?? 0}</p>
-
-<button onclick="openQty(${i})">إضافة</button>
-
-${isAdmin?`
-<button onclick="editProduct(${i})">✏️ تعديل</button>
-<button onclick="deleteProduct(${i})" style="background:red">🗑 حذف</button>
-`:``}
-
-</div>
-</div>`;
-});
+          ${isAdmin ? `
+            <button onclick="editProduct(${i})">✏️ تعديل</button>
+            <button onclick="deleteProduct(${i})" style="background:red">🗑 حذف</button>
+          ` : ""}
+        </div>
+      </div>
+    `;
+  });
 }
 
-/* 🔥 تكبير الصورة */
-window.openImg=(src)=>{
-bigImg.src=src;
-imgModal.style.display="flex";
+/* تكبير الصورة */
+window.openImg = (src)=>{
+  bigImg.src = src;
+  imgModal.style.display = "flex";
 };
 
-imgModal.onclick=()=>{
-imgModal.style.display="none";
+imgModal.onclick = ()=>{
+  imgModal.style.display = "none";
 };
 
-/* باقي الوظائف */
-window.filter=t=>{filterType=t;render();};
+/* وظائف */
+window.filter = t => { filterType = t; render(); };
+window.openLogin = ()=> loginModal.style.display="flex";
 
-window.openLogin=()=>loginModal.style.display="flex";
-
-window.login=()=>{
-if(pass.value==="1234"){
-isAdmin=true;
-addBtn.style.display="block";
-loginModal.style.display="none";
-render();
-}
+window.login = ()=>{
+  if(pass.value === "1234"){
+    isAdmin = true;
+    addBtn.style.display = "block";
+    loginModal.style.display = "none";
+    render();
+  }
 };
 
-window.openAdd=()=>{
-selectedIndex=null;
-addModal.style.display="flex";
+window.openAdd = ()=>{
+  selectedIndex = null;
+  addModal.style.display = "flex";
 };
 
-window.addProduct=()=>{
+window.addProduct = ()=>{
+  let file = pImage.files[0];
 
-let file=pImage.files[0];
+  let save = (img)=>{
+    let data = {
+      name:pName.value,
+      category:pCategory.value,
+      image:img,
+      boxStock:+pBox.value,
+      cartonStock:+pCarton.value
+    };
 
-let save=(img)=>{
-let data={
-name:pName.value,
-category:pCategory.value,
-image:img,
-boxStock:+pBox.value,
-cartonStock:+pCarton.value
+    if(selectedIndex !== null){
+      products[selectedIndex] = data;
+    }else{
+      products.push(data);
+    }
+
+    set(ref(db,"products"),products);
+    addModal.style.display="none";
+  };
+
+  if(file){
+    let r = new FileReader();
+    r.onload = ()=> save(r.result);
+    r.readAsDataURL(file);
+  }else{
+    save("");
+  }
 };
 
-if(selectedIndex!==null){
-products[selectedIndex]=data;
-}else{
-products.push(data);
-}
-
-set(ref(db,"products"),products);
-addModal.style.display="none";
+window.deleteProduct = i=>{
+  if(confirm("حذف المنتج؟")){
+    products.splice(i,1);
+    set(ref(db,"products"),products);
+  }
 };
 
-if(file){
-let r=new FileReader();
-r.onload=()=>save(r.result);
-r.readAsDataURL(file);
-}else{
-save("");
-}
+window.editProduct = i=>{
+  selectedIndex = i;
+  pName.value = products[i].name;
+  pCategory.value = products[i].category;
+  pBox.value = products[i].boxStock;
+  pCarton.value = products[i].cartonStock;
+  addModal.style.display = "flex";
 };
 
-window.deleteProduct=i=>{
-if(confirm("حذف المنتج؟")){
-products.splice(i,1);
-set(ref(db,"products"),products);
-}
+window.openQty = i=>{
+  selectedIndex = i;
+  qtyName.innerText = products[i].name;
+  qtyImage.src = products[i].image;
+  qtyModal.style.display = "flex";
 };
 
-window.editProduct=i=>{
-selectedIndex=i;
+window.confirmAdd = ()=>{
+  cart.push({
+    name:products[selectedIndex].name,
+    image:products[selectedIndex].image,
+    type:qtyType.value,
+    qty:+qtyInput.value
+  });
 
-pName.value=products[i].name;
-pCategory.value=products[i].category;
-pBox.value=products[i].boxStock;
-pCarton.value=products[i].cartonStock;
-
-addModal.style.display="flex";
+  count.innerText = cart.length;
+  qtyModal.style.display = "none";
 };
 
-window.openQty=i=>{
-selectedIndex=i;
-qtyName.innerText=products[i].name;
-qtyImage.src=products[i].image;
-qtyModal.style.display="flex";
+window.openCart = ()=>{
+  let div = document.getElementById("cartList");
+  div.innerHTML = "";
+
+  cart.forEach(p=>{
+    div.innerHTML += `
+      <div class="cartItem">
+        ${p.name} - ${p.qty}
+      </div>
+    `;
+  });
+
+  cartModal.style.display="flex";
 };
 
-window.confirmAdd=()=>{
-cart.push({
-name:products[selectedIndex].name,
-image:products[selectedIndex].image,
-type:qtyType.value,
-qty:+qtyInput.value
-});
+window.sendWhatsApp = ()=>{
+  let msg = "طلب:\n";
 
-count.innerText=cart.length;
-qtyModal.style.display="none";
+  cart.forEach(p=>{
+    msg += `${p.name} ${p.qty}\n`;
+  });
+
+  window.open("https://wa.me/966591007353?text=" + encodeURIComponent(msg));
 };
-
-window.openCart=()=>{
-let div=document.getElementById("cartList");
-div.innerHTML="";
-cart.forEach(p=>{
-div.innerHTML+=`<div class="cartItem">${p.name} - ${p.qty}</div>`;
-});
-cartModal.style.display="flex";
-};
-
-window.sendWhatsApp=()=>{
-let msg="طلب:\n";
-cart.forEach(p=>{
-msg+=`${p.name} ${p.qty}\n`;
-});
-window.open("https://wa.me/966591007353?text="+encodeURIComponent(msg));
-};
-
 </script>
 
 </body>
