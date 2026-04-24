@@ -305,40 +305,66 @@ button{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
+import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-database.js";
 
-const app = initializeApp({
-  databaseURL:"https://bayader-food-default-rtdb.firebaseio.com"
-});
+/* ================= إعداد Firebase (لازم يكون كامل) ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyXXXXXXX", 
+  authDomain: "bayader-food.firebaseapp.com",
+  databaseURL: "https://bayader-food-default-rtdb.firebaseio.com",
+  projectId: "bayader-food",
+  storageBucket: "bayader-food.appspot.com",
+  messagingSenderId: "123456",
+  appId: "1:123456:web:test"
+};
 
+const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 let products = [], cart = [], selectedIndex = null;
 let filterType = "all", isAdmin = false;
 
+/* ================= حماية من الشاشة البيضاء ================= */
+window.onerror = function(msg){
+  document.body.innerHTML = "<h2 style='color:red;text-align:center'>⚠️ خطأ في الموقع<br>" + msg + "</h2>";
+};
+
+/* ================= تحميل البيانات ================= */
 onValue(ref(db,"products"), s=>{
-  products = s.val() || [];
+  const data = s.val();
+
+  if(!data){
+    products = [];
+  }
+  else if(Array.isArray(data)){
+    products = data.map((p,i)=> ({ id: i, ...p }));
+  }
+  else{
+    products = Object.entries(data).map(([id, val]) => ({ id, ...val }));
+  }
+
   render();
 });
 
+/* ================= عرض المنتجات ================= */
 function render(){
   const div = document.getElementById("products");
+  if(!div) return;
+
   div.innerHTML = "";
 
   const list = filterType === "all"
     ? products
     : products.filter(p => p.category === filterType);
 
-  const fragment = document.createDocumentFragment();
-
   list.forEach((p,i)=>{
     const card = document.createElement("div");
     card.className = "card";
 
     card.innerHTML = `
-      <img loading="lazy" src="${p.image}">
+      <img loading="lazy" src="${p.image || ''}">
       <div class="card-body">
-        <h3>${p.name}</h3>
+        <h3>${p.name || ''}</h3>
         <p>علب: ${p.boxStock ?? 0}</p>
         <p>كراتين: ${p.cartonStock ?? 0}</p>
         <button class="addBtn">إضافة</button>
@@ -357,12 +383,11 @@ function render(){
       card.querySelector(".deleteBtn").onclick = ()=> deleteProduct(i);
     }
 
-    fragment.appendChild(card);
+    div.appendChild(card);
   });
-
-  div.appendChild(fragment);
 }
 
+/* ================= الصور ================= */
 window.openImg = (src)=>{
   bigImg.src = src;
   imgModal.style.display = "flex";
@@ -370,7 +395,10 @@ window.openImg = (src)=>{
 
 imgModal.onclick = ()=> imgModal.style.display="none";
 
+/* ================= الفلتر ================= */
 window.filter = t => { filterType = t; render(); };
+
+/* ================= الأدمن ================= */
 window.openLogin = ()=> loginModal.style.display="flex";
 
 window.login = ()=>{
@@ -382,11 +410,16 @@ window.login = ()=>{
   }
 };
 
+/* ================= إضافة ================= */
 window.openAdd = ()=>{
   selectedIndex = null;
+  pName.value = "";
+  pBox.value = "";
+  pCarton.value = "";
   addModal.style.display = "flex";
 };
 
+/* ================= حفظ ================= */
 window.addProduct = ()=>{
   let file = pImage.files[0];
 
@@ -400,49 +433,41 @@ window.addProduct = ()=>{
     };
 
     if(selectedIndex !== null){
-      products[selectedIndex] = data;
+      if(typeof products[selectedIndex].id === "string"){
+        set(ref(db,"products/" + products[selectedIndex].id), data);
+      }else{
+        products[selectedIndex] = data;
+        set(ref(db,"products"), products);
+      }
     }else{
-      products.push(data);
+      push(ref(db,"products"), data);
     }
 
-    set(ref(db,"products"),products);
     addModal.style.display="none";
   };
 
   if(file){
-    const img = new Image();
     const reader = new FileReader();
-
-    reader.onload = e=> img.src = e.target.result;
-
-    img.onload = ()=>{
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-
-      const maxWidth = 400;
-      const scale = maxWidth / img.width;
-
-      canvas.width = maxWidth;
-      canvas.height = img.height * scale;
-
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-
-      save(canvas.toDataURL("image/jpeg",0.7));
-    };
-
+    reader.onload = e=> save(e.target.result);
     reader.readAsDataURL(file);
   }else{
-    save("");
+    save(products[selectedIndex]?.image || "");
   }
 };
 
+/* ================= حذف ================= */
 window.deleteProduct = i=>{
   if(confirm("حذف المنتج؟")){
-    products.splice(i,1);
-    set(ref(db,"products"),products);
+    if(typeof products[i].id === "string"){
+      remove(ref(db,"products/" + products[i].id));
+    }else{
+      products.splice(i,1);
+      set(ref(db,"products"),products);
+    }
   }
 };
 
+/* ================= تعديل ================= */
 window.editProduct = i=>{
   selectedIndex = i;
   pName.value = products[i].name;
@@ -452,6 +477,7 @@ window.editProduct = i=>{
   addModal.style.display = "flex";
 };
 
+/* ================= السلة ================= */
 window.openQty = i=>{
   selectedIndex = i;
   qtyName.innerText = products[i].name;
@@ -470,29 +496,18 @@ window.confirmAdd = ()=>{
 };
 
 window.openCart = ()=>{
-  const div = document.getElementById("cartList");
-  div.innerHTML = "";
-
-  const fragment = document.createDocumentFragment();
-
+  cartList.innerHTML = "";
   cart.forEach(p=>{
-    const item = document.createElement("div");
-    item.className = "cartItem";
-    item.textContent = `${p.name} - ${p.qty}`;
-    fragment.appendChild(item);
+    cartList.innerHTML += `<div class="cartItem">${p.name} - ${p.qty}</div>`;
   });
-
-  div.appendChild(fragment);
   cartModal.style.display="flex";
 };
 
 window.sendWhatsApp = ()=>{
   let msg = "طلب:\n";
-
   cart.forEach(p=>{
     msg += `${p.name} ${p.qty}\n`;
   });
-
   window.open("https://wa.me/966556602322?text=" + encodeURIComponent(msg));
 };
 </script>
