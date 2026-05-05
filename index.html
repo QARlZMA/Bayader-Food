@@ -228,6 +228,7 @@ button{
   <button onclick="filter('مصاص')">مصاص</button>
   <button onclick="filter('كيك')">كيك</button>
   <button onclick="filter('لبان')">لبان</button>
+<button onclick="filter('بفك')">بفك</button>
 </div>
 
 <div class="grid" id="products"></div>
@@ -267,11 +268,15 @@ button{
       <option>مصاص</option>
       <option>كيك</option>
       <option>لبان</option>
+     <option>بفك</option>
     </select>
 
     <input type="file" id="pImage">
     <input id="pBox" placeholder="علب" style="width:100%;padding:8px">
-    <input id="pCarton" placeholder="كراتين" style="width:100%;padding:8px">
+    <input id="pCarton" placeholder="كرتون" style="width:100%;padding:8px">
+<input id="pCarton" placeholder="كيس" style="width:100%;padding:8px">
+
+
 
     <button onclick="addProduct()">حفظ</button>
   </div>
@@ -366,7 +371,8 @@ function render(){
       <div class="card-body">
         <h3>${p.name || ''}</h3>
         <p>علب: ${p.boxStock ?? 0}</p>
-        <p>كراتين: ${p.cartonStock ?? 0}</p>
+        <p>كرتون: ${p.cartonStock ?? 0}</p>
+      <p>كيس: ${p.cartonStock ?? 0}</p>
         <button class="addBtn">إضافة</button>
         ${isAdmin ? `
           <button class="editBtn">✏️ تعديل</button>
